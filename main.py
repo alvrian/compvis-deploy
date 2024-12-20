@@ -7,10 +7,10 @@ from skimage import img_as_float
 from skimage.segmentation import chan_vese
 from skimage import img_as_float
 import streamlit as st
-import pandas as pd
-import pickle
 from PIL import Image
 import io
+from sklearn.cluster import KMeans
+from fcmeans import FCM
 
 def preProcess(img,threshold= 1, thresh = -30):
     sigma_est = estimate_sigma(img, channel_axis=-1, average_sigmas=True)
@@ -186,13 +186,6 @@ def plot_comparison(original_image, segmented_image, segmentation_chanvese):
     st.image(buf, use_container_width=True)
     plt.close()
 
-#load model
-try:
-    with open("./fcm.pkl", 'rb') as f: fcm = pickle.load(f)
-    with open("./fcm-superpixel.pkl", 'rb') as f1: fcm_superpixel = pickle.load(f1)
-    with open("./kmeans.pkl", 'rb') as f2: kmeans = pickle.load(f2)
-except Exception as e:
-    raise e
 
 #streamlit apps
 st.title('Sea-Land Segmentation based on Superpixel Fuzzy C-Means Clustering and Modified Chan-Vese Model From Optical Images')
@@ -204,30 +197,38 @@ with st.form('base_form'):
 
 if submit_button:
     if input_img is not None:
-        st.write(f"Image uploaded successfully! with {model_selection}")
+        st.write(f"Image uploaded successfully, generating prediction with {model_selection}")
         img = np.array(Image.open(input_img))
         img = cv.cvtColor(img, cv.COLOR_RGB2BGR)
         img = preProcess(img)
-        
+        kmeans = KMeans(n_clusters=2, random_state = 42)
+        fcm = FCM(n_clusters=2, random_state = 42, m = 2)
+        fcm_superpixel = FCM(n_clusters=2, random_state = 42, m = 2)
+
         if(model_selection == 'all model'):
             weighted_features_raw = Get_Weighted_Features(img, "raw")
             segments = Get_Superpixel_Segments(img,"SEEDS")
             weighted_features_spx = Get_Weighted_Features(img,"spx", segments)
             #start prediction
-            st.write("k-means")
-            labels = kmeans.predict(weighted_features_raw)
+            st.write("K-means")
+            labels = kmeans.fit_predict(weighted_features_raw)
+            segmented_image = labels.reshape(img.shape[:2])
             segmented_image = labels.reshape(img.shape[:2])
             image_float = img_as_float(segmented_image)
             segmentation_chanvese = chan_vese(image_float, mu=0.25, lambda1=1, lambda2=1, max_num_iter=200, tol=1e-3)
             plot_comparison(img, segmented_image, segmentation_chanvese)
             st.write("Fuzzy C-means")
+            fcm.fit(weighted_features_raw)
             labels = fcm.predict(weighted_features_raw)
+            segmented_image = labels.reshape(img.shape[:2])
             segmented_image = labels.reshape(img.shape[:2])
             image_float = img_as_float(segmented_image)
             segmentation_chanvese = chan_vese(image_float, mu=0.25, lambda1=1, lambda2=1, max_num_iter=200, tol=1e-3)
             plot_comparison(img, segmented_image, segmentation_chanvese)
             st.write("Fuzzy C-means with superpixel")
+            fcm_superpixel.fit(weighted_features_spx)
             labels = fcm_superpixel.predict(weighted_features_spx)
+            superpixel_labels = fcm_superpixel.predict(weighted_features_spx)
             segmented_image = np.zeros_like(segments)
             segments = Get_Superpixel_Segments(img,"SEEDS")
             segmented_image = np.zeros_like(segments)
@@ -239,16 +240,19 @@ if submit_button:
             plot_comparison(img,segmented_image, segmentation_chanvese)
         elif(model_selection == "K-means"):
             weighted_features_raw = Get_Weighted_Features(img, "raw")
+            labels = kmeans.fit_predict(weighted_features_raw)
             st.write("K-means")
-            labels = kmeans.predict(weighted_features_raw)
+            segmented_image = labels.reshape(img.shape[:2])
             segmented_image = labels.reshape(img.shape[:2])
             image_float = img_as_float(segmented_image)
             segmentation_chanvese = chan_vese(image_float, mu=0.25, lambda1=1, lambda2=1, max_num_iter=200, tol=1e-3)
-            plot_comparison(img, segmented_image, segmentation_chanvese)      
+            plot_comparison(img, segmented_image, segmentation_chanvese)  
         elif(model_selection == "Fuzzy C-means"):
             weighted_features_raw = Get_Weighted_Features(img, "raw")
+            fcm.fit(weighted_features_raw)
             st.write("Fuzzy C-means")
             labels = fcm.predict(weighted_features_raw)
+            segmented_image = labels.reshape(img.shape[:2])
             segmented_image = labels.reshape(img.shape[:2])
             image_float = img_as_float(segmented_image)
             segmentation_chanvese = chan_vese(image_float, mu=0.25, lambda1=1, lambda2=1, max_num_iter=200, tol=1e-3)
@@ -257,7 +261,9 @@ if submit_button:
             segments = Get_Superpixel_Segments(img,"SEEDS")
             weighted_features_spx = Get_Weighted_Features(img,"spx", segments)
             st.write("Fuzzy C-means with superpixel")
+            fcm_superpixel.fit(weighted_features_spx)
             labels = fcm_superpixel.predict(weighted_features_spx)
+            superpixel_labels = fcm_superpixel.predict(weighted_features_spx)
             segmented_image = np.zeros_like(segments)
             segments = Get_Superpixel_Segments(img,"SEEDS")
             segmented_image = np.zeros_like(segments)

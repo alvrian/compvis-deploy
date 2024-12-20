@@ -6,5 +6,4 @@ numpy
 scikit-image
 PyWavelets
 fuzzy-c-means
-pandas
 Pillow 
