@@ -1,5 +1,4 @@
 streamlit
-opencv
 opencv-contrib-python
 matplotlib
 scikit-learn
