@@ -1,6 +1,5 @@
 streamlit
-opencv-python-headless
-# opencv-contrib-python
+opencv-contrib-python
 matplotlib
 scikit-learn
 numpy
