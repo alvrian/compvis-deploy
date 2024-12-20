@@ -1,0 +1,10 @@
+streamlit
+opencv-contrib-python
+matplotlib
+scikit-learn
+numpy
+scikit-image
+PyWavelets
+fuzzy-c-means
+pandas
+Pillow 
