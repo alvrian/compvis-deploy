@@ -1,5 +1,5 @@
-## Dover
-### AOL Computer Vision LA08
+# Dover
+### AOL Computer Vision LA08 - Project
 <div>
   <img src = "Dover-Cover.png" alt = "Logo"> <br>
   <p>
