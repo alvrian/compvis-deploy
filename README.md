@@ -11,7 +11,7 @@
 https://alvrian-compvis.streamlit.app/
 
 #### Checkout the details in here
-[Link to Canva](https://www.canva.com/design/DAGW5wF8mH0/YOoox5zqUsYZgjjTqZWfDQ/edit?utm_content=DAGW5wF8mH0&utm_campaign=designshare&utm_medium=link2&utm_source=sharebutton_) <br>
+[Link to Canva](https://www.canva.com/design/DAGW5wF8mH0/_G0l4w0nhnpagxmZwV47sg/view?utm_content=DAGW5wF8mH0&utm_campaign=designshare&utm_medium=link2&utm_source=uniquelinks&utlId=hf1a152820a) <br>
 
 #### Created By:
 Binus University
