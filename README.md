@@ -2,9 +2,7 @@
 ### AOL Computer Vision LA08 - Project
 <div>
   <img src = "Dover-Cover.png" alt = "Logo"> <br>
-  <p>
-  we will attempt to find the Sea-Land segmentation by means of traditional Computer Vision, specifically clustering-based Image Segmentation using Edge features, Color features, and Texture features. In using traditional Computer Vision methods, certain limitations are present, such as the need to manually extract features in a step called Feature Extraction.
-  </p>
+  <p>Sea-Land Segmentation based on Superpixel Fuzzy C-Means Clustering and Modified Chan-Vese Model From Optical Images. This is a project created for Computer Vision course that I took during 5th semester. I work with 3 other members to create this project. We use Superpixel Fuzzy C-Means Clustering and Modified Chan-Vese Model to segment the image into sea and land. We use Python and OpenCV to create this project. We also use Streamlit to create the web app.</p>
 </div>
 
 #### streamlit deployment
